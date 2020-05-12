@@ -1,0 +1,70 @@
+#First hash table to store immediate nodes and weights
+tripmap = {}
+tripmap["NY"] = {}
+tripmap["NY"]["Buffalo"] = 4
+tripmap["NY"]["Pittsburgh"] = 9
+tripmap["Buffalo"] = {}
+tripmap["Buffalo"]["Pittsburgh"] = 3
+tripmap["Buffalo"]["Detroit"] = 5
+tripmap["Buffalo"]["Cleveland"] = 2
+tripmap["Pittsburgh"] = {}
+tripmap["Pittsburgh"]["Cleveland"] = 2
+tripmap["Pittsburgh"]["Indianapolis"] = 6
+tripmap["Indianapolis"] = {}
+tripmap["Indianapolis"]["Chicago"] = 3
+tripmap["Cleveland"] = {}
+tripmap["Cleveland"]["Toledo"] = 2
+tripmap["Toledo"]={}
+tripmap["Toledo"]["Chicago"] = 4
+tripmap["Detroit"]={}
+tripmap["Detroit"]["Chicago"] = 5
+tripmap["Chicago"] = {} #The final node doesnot have any neighbors
+
+# second hash table for hours. All future hours will be infinity
+batman = float("inf")
+hours = {}
+hours["Buffalo"] = 4
+hours["Pittsburgh"] = 9
+hours["Detroit"] = batman
+hours["Cleveland"] = batman
+hours["Indianapolis"] = batman
+hours["Toledo"] = batman
+hours["Chicago"] = batman
+
+# third hashtable for parents ; i name this as prevstop
+prevstop = {}
+prevstop["Buffalo"] = "NY"
+prevstop["Pittsburgh"] = "NY"
+prevstop["Detroit"] = None
+prevstop["Cleveland"] = None
+prevstop["Indianapolis"] = None
+prevstop["Toledo"] = None
+prevstop["Chicago"] = None
+
+#Processed node should not be visited again
+pitstop = []
+#Implementing Dijkstra's algo
+def find_least_hours_to_city(hours):
+    least_hour = float("inf")
+    least_hour_to_city = None
+    for city in hours:
+        hours_num = hours[city]
+        if hours_num < least_hour and city not in pitstop:
+            least_hour = hours_num
+            least_hour_to_city = city
+    return least_hour_to_city
+
+city = find_least_hours_to_city(hours)
+while city is not None:
+    hours_num = hours[city]
+    nextstops = tripmap[city]
+    for i in nextstops.keys():
+        new_hours = hours_num + nextstops[i]
+        if hours[i] > new_hours:
+            hours[i] = new_hours
+            prevstop[i] = city
+    pitstop.append(city)
+    city = find_least_hours_to_city(hours)
+print(hours)
+output : {'Indianapolis': 13, 'Chicago': 12, 'Pittsburgh': 7, 'Cleveland': 6, 'Detroit': 9, 'Toledo': 8, 'Buffalo': 4}
+We can see that the least time to reach Chicago from NY is 12 hours. 
